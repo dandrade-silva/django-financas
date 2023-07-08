@@ -1,15 +1,12 @@
 {% extends 'bases/base.html' %}
 {% load static %}
-
 {% block 'head' %}
 
 <link href="{% static 'styles/perfil/home.css' %}" rel="stylesheet">
 <link href="{% static 'styles/perfil/gerenciar.css' %}" rel="stylesheet">
 
 {% endblock %}
-
 {% block 'body' %}
-
 {% load custom_filters %}
 
 <br>
@@ -23,45 +20,40 @@
         <div class="col-md-5">
             <p class="fonte-destaque">Suas contas</p>
             <hr>
-
             <div class="contas">
-
-
                 {% for conta in contas %}
                 <div class="lista-contas-main">
-                    <span><img width="10%" src="{{conta.icone.url}}">&nbsp&nbsp{{conta}}</span>
+                    <span><img width="10%" src="{{conta.icone.url}}">&nbsp&nbsp{{conta.apelido}}</span>
 
-                    <span class="total-conta positivo ">R$ {{ conta.valor|format_number }}</span>
+                    <span class="total-conta positivo ">R$ {{ conta.valor|format_number }}&nbsp&nbsp<a
+                            href="/perfil/deletar_banco/{{conta.id}}"><img
+                                src="{% static 'assets/imagens/perfil/excluir.png' %}" title="Excluir Conta"></a></span>
                 </div>
                 <br>
                 {% endfor %}
-
-
             </div>
-
             <hr>
             <span class="fonte-destaque">Total:</span>
             <span class="positivo total-conta font-destaque">R$ {{ total_contas|format_number }}</span>
         </div>
-
         <div class="col-md-2"></div>
-
         <div class="col-md-5">
             <p class="fonte-destaque">Nova conta</p>
-
             <form action="{% url 'cadastrar_banco' %}" method="POST" enctype='multipart/form-data'>{% csrf_token %}
                 <label>Apelido</label>
                 <input type="text" name="apelido" class="form-control" placeholder="">
                 <br>
                 <label>Banco</label>
                 <select name="banco" class="form-select">
-                    <option value="NU">Nubank</option>
+                    {% for banco in lista_bancos %}
+                    <option value="{{ banco.0 }}">{{ banco.1 }}</option>
+                    {% endfor %}
                 </select>
                 <br>
                 <label>Tipo</label>
                 <select name="tipo" class="form-select">
-                    <option value="pf">Pessoa física</option>
-                    <option value="pj">Pessoa jurídica</option>
+                    <option value="pf">Pessoa Física</option>
+                    <option value="pj">Pessoa Jurídica</option>
                 </select>
                 <br>
                 <label>Valor</label>
@@ -70,48 +62,48 @@
                 <input type="file" placeholder="Ícone" name="icone">
                 <br>
                 <br>
-                <input style="width: 100%" type="submit" class="botao-principal">
+                <input style="width: 100%" type="submit" class="botao-principal" value="Cadastrar">
             </form>
         </div>
     </div>
-
     <hr>
-
     <div class="row">
         <div class="col-md-5">
             <span class="fonte-destaque">Nova categoria</span>
-
-            <form action="" method="POST">
+            <form action="{% url 'cadastrar_categoria' %}" method="POST">{% csrf_token %}
                 <label>Categoria</label>
                 <input type="text" name="categoria" class="form-control">
                 <br>
-
                 <input type="checkbox" name="essencial" value="essencial"><label class="positivo">&nbspEssencial</label>
                 <br>
                 <br>
                 <input style="width: 100%" type="submit" class="botao-principal" value="Adicionar">
             </form>
         </div>
-
         <div class="col-md-2">
         </div>
-
         <div class="col-md-5">
             <span class="fonte-destaque">Suas categoria</span>
             <br>
             <div class="contas">
-
-
+                {% for categoria in categorias %}
                 <div class="lista-contas-main">
-                    <span>Lazer</span>
-
-                    <span class="total-conta"><a href="#"><img src="#"></a></span>
+                    <span>{{categoria.categoria}}</span>
+                    <span class="total-conta">
+                        {% if categoria.essencial %}
+                        <a href="{% url 'update_categoria' categoria.id %}"><img
+                                src="{% static 'assets/imagens/perfil/essencial.png' %}" title="Essencial"></a>
+                        {% else %}
+                        <a href="{% url 'update_categoria' categoria.id %}"><img
+                                src="{% static 'assets/imagens/perfil/nao-essencial.png' %}" title="Não Essencial"></a>
+                        {% endif %}
+                    </span>
                 </div>
-                <br>
-
+                {% endfor %}
 
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

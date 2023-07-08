@@ -1,24 +1,29 @@
 from django.shortcuts import render, redirect
-from .models import Conta
+from .models import Conta, Categoria
 from django.contrib import messages
 from django.contrib.messages import constants
-
+from .utils import calcula_total
 
 # Create your views here.
 
 
 def home(request):
-    return render(request, 'perfil/home.html')
+    contas = Conta.objects.all().order_by('-valor')
+    total_contas = calcula_total(contas, 'valor')
+
+    return render(request, 'perfil/home.html', {'contas': contas, 'total_contas': total_contas})
 
 
 def gerenciar(request):
     contas = Conta.objects.all().order_by('-valor')
+    categorias = Categoria.objects.all().order_by('-essencial', 'categoria')
     # total_contas = contas.aggregate(Sum('valor'))
-    total_contas = 0
+    total_contas = calcula_total(contas, 'valor')
 
-    for conta in contas:
-        total_contas += conta.valor
-    return render(request, 'perfil/gerenciar.html', {'contas': contas, 'total_contas': total_contas})
+    lista_bancos = Conta.lista_bancos
+
+    print(total_contas)
+    return render(request, 'perfil/gerenciar.html', {'contas': contas, 'total_contas': total_contas, 'categorias': categorias, 'lista_bancos': lista_bancos})
 
 
 def cadastrar_banco(request):
@@ -33,6 +38,16 @@ def cadastrar_banco(request):
                              'Preencha todos os campos')
         return redirect('/perfil/gerenciar/')
 
+    if not apelido.strip():
+        messages.add_message(request, constants.ERROR,
+                             'O apelido não pode ser vazio ou conter apenas espaços')
+        return redirect('/perfil/gerenciar/')
+
+    if Conta.objects.filter(apelido=apelido).exists():
+        messages.add_message(request, constants.ERROR,
+                             'O apelido já está sendo utilizado. Por favor, escolha outro')
+        return redirect('/perfil/gerenciar/')
+
     conta = Conta(
         apelido=apelido,
         banco=banco,
@@ -45,3 +60,52 @@ def cadastrar_banco(request):
     messages.add_message(request, constants.SUCCESS,
                          'Conta cadastrada com sucesso')
     return redirect('/perfil/gerenciar/')
+
+
+def deletar_banco(request, id):
+    conta = Conta.objects.get(id=id)
+    conta.delete()
+
+    messages.add_message(request, constants.SUCCESS,
+                         'Conta removida com sucesso')
+    return redirect('/perfil/gerenciar/')
+
+
+def cadastrar_categoria(request):
+    categoria = request.POST.get('categoria')
+    essencial = bool(request.POST.get('essencial'))
+
+    if not categoria.strip():
+        messages.add_message(request, constants.ERROR,
+                             'Erro! A categoria não pode ser vazia ou conter apenas espaços')
+        return redirect('/perfil/gerenciar/')
+
+    if Categoria.objects.filter(categoria=categoria).exists():
+        messages.add_message(request, constants.INFO,
+                             'Essa categoria já está cadastrada')
+        return redirect('/perfil/gerenciar/')
+
+    categoria = Categoria(
+        categoria=categoria,
+        essencial=essencial
+    )
+
+    categoria.save()
+
+    messages.add_message(request, constants.SUCCESS,
+                         'Categoria cadastrada com sucesso')
+    return redirect('/perfil/gerenciar/')
+
+
+def update_categoria(request, id):
+    categoria = Categoria.objects.get(id=id)
+
+    categoria.essencial = not categoria.essencial
+
+    categoria.save()
+
+    messages.add_message(request, constants.INFO,
+                         'Categoria alterada')
+
+    return redirect('/perfil/gerenciar/')
+    # return render(request, 'perfil/gerenciar.html')
