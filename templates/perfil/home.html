@@ -1,14 +1,15 @@
 {% extends 'bases/base.html' %}
 {% load static %}
-{% load custom_filters %}
 
 {% block 'head' %}
 
-<link href="{% static 'styles/perfil/home.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'styles/home.css' %}">
 
 {% endblock %}
 
 {% block 'body' %}
+{% load custom_filters %}
+
 <div class="container">
     <br>
     <br>

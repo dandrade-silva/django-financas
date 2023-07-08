@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
-    "perfil"
+    "perfil.apps.PerfilConfig",
+    "extrato.apps.ExtratoConfig",
 ]
 
 MIDDLEWARE = [
