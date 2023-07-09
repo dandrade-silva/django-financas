@@ -1,0 +1,44 @@
+{% extends 'bases/base.html' %}
+{% load static %}
+{% block 'head' %}
+
+<link rel="stylesheet" href="{% static 'styles/home.css' %}">
+<link rel="stylesheet" href="{% static 'styles/view_extrato.css' %}">
+
+{% endblock %}
+
+{% block 'body' %}
+{% load custom_filters %}
+
+<div class="container">
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-md-2 text-center">
+        </div>
+        <div class="col-md">
+            <div class="card">
+                {% for categoria in categorias %}
+                <p>{{categoria}}</p>
+                <div>
+                    <span style="float: left !important;">R$ {{categoria.total_gasto|format_number }}</span>
+                    <span style="float: right !important;">R$ {{categoria.valor_planejamento|format_number }}</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated " role="progressbar"
+                        style="width: {{ categoria.calcula_percentual_gasto_por_categoria }}%" aria-valuenow="50"
+                        aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+                <hr>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-2 text-center">
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

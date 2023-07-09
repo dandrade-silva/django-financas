@@ -1,10 +1,15 @@
+from io import BytesIO
+from django.conf import settings
+from django.http import FileResponse
 from django.shortcuts import render, redirect
+from weasyprint import HTML
 from perfil.models import Conta, Categoria
 from .models import Valores
 from django.contrib import messages
 from django.contrib.messages import constants
-from perfil.utils import calcula_total
 from datetime import datetime
+from django.template.loader import render_to_string
+import os
 
 
 def novo_valor(request):
@@ -49,7 +54,7 @@ def view_extrato(request):
     contas = Conta.objects.all()
     categorias = Categoria.objects.all()
 
-    valores = Valores.objects.filter(data__month=datetime.now().day)
+    valores = Valores.objects.filter(data__month=datetime.now().month)
 
     conta_get = request.GET.get('conta')
 
@@ -61,3 +66,21 @@ def view_extrato(request):
         valores = valores.filter(categoria__id=categoria_get)
 
     return render(request, 'extrato/view_extrato.html', {'valores': valores, 'contas': contas, 'categorias': categorias})
+
+
+def exportar_pdf(request):
+    valores = Valores.objects.filter(data__month=datetime.now().month)
+    contas = Conta.objects.all()
+    categorias = Categoria.objects.all()
+
+    path_template = os.path.join(
+        settings.BASE_DIR, 'templates/partials/extrato.html')
+    path_output = BytesIO()
+
+    template_render = render_to_string(
+        path_template, {'valores': valores, 'contas': contas, 'categorias': categorias})
+    HTML(string=template_render).write_pdf(path_output)
+
+    path_output.seek(0)
+
+    return FileResponse(path_output, filename="extrato.pdf")

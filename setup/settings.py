@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "perfil.apps.PerfilConfig",
     "extrato.apps.ExtratoConfig",
+    "planejamento.apps.PlanejamentoConfig",
+
 ]
 
 MIDDLEWARE = [
