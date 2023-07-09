@@ -85,9 +85,9 @@
             <td>R$ {{valor.valor|format_number}}</td>
             <td>
                 {% if valor.tipo == 'S'%}
-                <img src="{% static 'perfil/img/saidas.png' %}">
+                <img src="{% static 'assets/imagens/perfil/despesa.png' %}" style="width: 24px;">
                 {% else %}
-                <img src="{% static 'perfil/img/entradas.png' %}">
+                <img src="{% static 'assets/imagens/perfil/entrada.png' %}" style="width: 24px;">
                 {% endif %}
 
             </td>

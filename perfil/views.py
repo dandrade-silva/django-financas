@@ -14,16 +14,24 @@ def home(request):
     contas = Conta.objects.all().order_by('-valor')
     total_contas = calcula_total(contas, 'valor')
 
-    valores = Valores.objects.filter(data__month=datetime.now().month)
-    entradas = valores.filter(tipo='E')
-    saidas = valores.filter(tipo='S')
-
+    entradas = Valores.objects.filter(tipo='E')
     total_entradas = calcula_total(entradas, 'valor')
+
+    saidas = Valores.objects.filter(tipo='S')
     total_saidas = calcula_total(saidas, 'valor')
+
+    entradas_mes = Valores.objects.filter(
+        data__month=datetime.now().month).filter(tipo='E')
+    saidas_mes = Valores.objects.filter(
+        data__month=datetime.now().month).filter(tipo='S')
+    total_entradas_mes = calcula_total(entradas_mes, 'valor')
+    total_saidas_mes = calcula_total(saidas_mes, 'valor')
+
+    saldo_mes = total_entradas_mes - total_saidas_mes
 
     percentual_gastos_essenciais, percentual_gastos_nao_essenciais = calcula_equilibrio_financeiro()
 
-    return render(request, 'perfil/home.html', {'contas': contas, 'total_contas': total_contas, 'total_saidas': total_saidas, 'total_entradas': total_entradas, 'percentual_gastos_essenciais': int(percentual_gastos_essenciais), 'percentual_gastos_nao_essenciais': int(percentual_gastos_nao_essenciais)})
+    return render(request, 'perfil/home.html', {'contas': contas, 'total_contas': total_contas, 'total_entradas': total_entradas, 'total_saidas': total_saidas, 'total_saidas_mes': total_saidas_mes, 'total_entradas_mes': total_entradas_mes, 'saldo_mes': saldo_mes, 'percentual_gastos_essenciais': int(percentual_gastos_essenciais), 'percentual_gastos_nao_essenciais': int(percentual_gastos_nao_essenciais)})
 
 
 def gerenciar(request):
@@ -42,10 +50,10 @@ def cadastrar_banco(request):
     apelido = request.POST.get('apelido')
     banco = request.POST.get('banco')
     tipo = request.POST.get('tipo')
-    valor = request.POST.get('valor')
+    valor = float(str(request.POST.get('valor')).replace(',', '.'))
     icone = request.FILES.get('icone')
 
-    if len(apelido.strip()) == 0 or len(valor.strip()) == 0:
+    if len(apelido.strip()) == 0 or valor == "0":
         messages.add_message(request, constants.ERROR,
                              'Preencha todos os campos')
         return redirect('/perfil/gerenciar/')

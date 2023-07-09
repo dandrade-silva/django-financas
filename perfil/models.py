@@ -32,6 +32,7 @@ class Categoria(models.Model):
 
 class Conta(models.Model):
     lista_bancos = (
+        ('CA', 'Carteira'),
         ('BB', 'Banco do Brasil'),
         ('Bradesco', 'Banco Bradesco'),
         ('Caixa', 'Caixa Econômica Federal'),

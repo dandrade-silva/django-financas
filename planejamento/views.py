@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from perfil.models import Categoria
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.contrib import messages
+from django.contrib.messages import constants
 
 # Create your views here.
 
@@ -20,7 +22,7 @@ def update_valor_categoria(request, id):
     categoria.valor_planejamento = novo_valor
     categoria.save()
 
-    return JsonResponse({'status': 'Sucesso'})
+    return JsonResponse({'Status': 'Sucesso'})
 
 
 def ver_planejamento(request):
