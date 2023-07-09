@@ -19,7 +19,7 @@
                 <div class="card">
                     <div class="row">
                         <div class="col-md-8">
-                            <span class="fonte-destaque">RS 1.000,00</span>
+                            <span class="fonte-destaque">RS {{ total_entradas|format_number }}</span>
                         </div>
                         <div class="col-md">
                             <img class="icone-setas" src="{% static 'assets/imagens/perfil/entrada.png' %}">
@@ -34,7 +34,7 @@
                 <div class="card">
                     <div class="row">
                         <div class="col-md-8">
-                            <span class="fonte-destaque">RS 1.000,00</span>
+                            <span class="fonte-destaque">RS {{ total_saidas|format_number }}</span>
                         </div>
                         <div class="col-md">
                             <img class="icone-setas" src="{% static 'assets/imagens/perfil/despesa.png' %}">

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "perfil.apps.PerfilConfig",
     "extrato.apps.ExtratoConfig",
     "planejamento.apps.PlanejamentoConfig",
+    "contas.apps.ContasConfig",
 
 ]
 
