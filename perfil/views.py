@@ -4,7 +4,7 @@ from extrato.models import Valores
 from .models import Conta, Categoria
 from django.contrib import messages
 from django.contrib.messages import constants
-from .utils import calcula_total
+from .utils import calcula_total, calcula_equilibrio_financeiro
 from datetime import datetime
 
 # Create your views here.
@@ -21,7 +21,9 @@ def home(request):
     total_entradas = calcula_total(entradas, 'valor')
     total_saidas = calcula_total(saidas, 'valor')
 
-    return render(request, 'perfil/home.html', {'contas': contas, 'total_contas': total_contas, 'total_saidas': total_saidas, 'total_entradas': total_entradas})
+    percentual_gastos_essenciais, percentual_gastos_nao_essenciais = calcula_equilibrio_financeiro()
+
+    return render(request, 'perfil/home.html', {'contas': contas, 'total_contas': total_contas, 'total_saidas': total_saidas, 'total_entradas': total_entradas, 'percentual_gastos_essenciais': int(percentual_gastos_essenciais), 'percentual_gastos_nao_essenciais': int(percentual_gastos_nao_essenciais)})
 
 
 def gerenciar(request):
